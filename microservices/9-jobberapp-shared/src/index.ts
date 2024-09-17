@@ -70,3 +70,16 @@ export {
   ISellerDocument,
 } from './interfaces/seller.interface';
 export { IEmailLocals } from './interfaces/email.interface';
+
+export { upload, videoUpload } from './interfaces/cloudinary-upload';
+export {
+  BadRequestError,
+  CustomError,
+  ErrNumException,
+  FileTooLargeError,
+  IError,
+  IErrorResponse,
+  NotAuthorizedError,
+  NotFoundError,
+  ServerError,
+} from './interfaces/error-handler';
