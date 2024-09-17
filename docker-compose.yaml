@@ -11,6 +11,7 @@ services:
     command: redis-server --loglevel warning
     volumes:
       - ./docker-volumes/cache:/data
+
   mongodb:
     container_name: mongodb_container
     image: mongo:latest
@@ -19,6 +20,7 @@ services:
       - 27017:27017
     volumes:
       - ./docker-volumes/data:/data/db
+
   mysql:
     container_name: mysql_container
     image: mysql
@@ -33,6 +35,7 @@ services:
       - 3306:3306
     volumes:
       - ./docker-volumes/mysql:/var/lib/mysql
+
   postgres:
     container_name: postgres_container
     image: postgres
@@ -45,8 +48,9 @@ services:
       - 5432:5432
     volumes:
       - ./docker-volumes/postgres:/var/lib/postgres
+
   rabbitmq:
-    container: rabbitmq_container
+    container_name: rabbitmq_container
     image: rabbitmq:3.13-rc-management-alpine
     restart: always
     ports:
@@ -54,39 +58,41 @@ services:
       - 5672:5672
       # Management port - to access the dashboard
       - 15672:15672
+
   elasticsearch:
     container_name: elasticsearch_container
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
     restart: always
     environment:
-      ES_JAVA_OPTS: -Xmxlg -Xmslg
+      ES_JAVA_OPTS: -Xmx1g -Xms1g
       bootstrap.memory_lock: "true"
       discovery.type: single-node
       xpack.security.enabled: "false"
       xpack.security.authc.api_key.enabled: "true"
       xpack.monitoring.collection.enabled: "true"
       xpack.security.enrollment.enabled: "true"
-      ports:
-        # Elastic search uses 9300:9300 for multi-node cluster
-        - 9200:9200
-      volumes:
-        - ./docker-volumes/elasticsearch-data:/usr/share/elasticsearch/data
-      networks:
-        - elastic
+    ports:
+      # ElasticSearch uses 9200 for REST and 9300 for inter-node communication in a cluster
+      - 9200:9200
+    volumes:
+      - ./docker-volumes/elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
   kibana:
     container_name: kibana_container
     image: docker.elastic.co/kibana/kibana:8.15.1
     restart: always
     environment:
-      # if using multi-node cluster, add all the service endpoints to this list
-      ELASTICSEARCH_HOST: ["http://elasticsearch_container:9200"]
+      ELASTICSEARCH_HOST: "http://elasticsearch_container:9200"
     ports:
       - 5601:5601
+    volumes:
+      - ./kibana.yaml:/usr/share/kibana/config/kibana.yml
+    depends_on:
+      - elasticsearch
     networks:
       - elastic
-    volumes:
-      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
-    depends_on: elasticsearch
 
 networks:
   elastic:
