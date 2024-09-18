@@ -71,7 +71,8 @@ export {
 } from './interfaces/seller.interface';
 export { IEmailLocals } from './interfaces/email.interface';
 
-export { upload, videoUpload } from './interfaces/cloudinary-upload';
+export { upload, videoUpload } from './cloudinary-upload';
+
 export {
   BadRequestError,
   CustomError,
@@ -82,4 +83,8 @@ export {
   NotAuthorizedError,
   NotFoundError,
   ServerError,
-} from './interfaces/error-handler';
+} from './error-handler';
+
+export { verifyGatewayRequest } from './gateway-middleware';
+
+export { winstonLogger } from './logger';
