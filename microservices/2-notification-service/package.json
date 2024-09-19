@@ -22,6 +22,7 @@
     "tsconfig-paths": "^4.2.0"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.15.0",
     "@thejuggernaut01/jobberapp-shared": "^0.0.1",
     "@types/amqplib": "^0.10.5",
     "@types/email-templates": "^10.0.4",

@@ -5,13 +5,17 @@ import { config } from '@notifications/config';
 import { Application } from 'express';
 import { winstonLogger } from '@thejuggernaut01/jobberapp-shared';
 import 'express-async-errors';
+import { healthRoutes } from '@notifications/routes';
+import { checkConnection } from '@notifications/elasticsearch';
 
 const SERVER_PORT = 4001;
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationService', 'debug');
 
 const startQueues = async (): Promise<void> => {};
 
-const startElasticSearch = (): void => {};
+const startElasticSearch = (): void => {
+  checkConnection();
+};
 
 const startServer = (app: Application): void => {
   try {
@@ -27,8 +31,9 @@ const startServer = (app: Application): void => {
   }
 };
 
-const start = (app: Application): void => {
+export const start = (app: Application): void => {
   startServer(app);
   startQueues();
   startElasticSearch();
+  app.use('', healthRoutes);
 };
