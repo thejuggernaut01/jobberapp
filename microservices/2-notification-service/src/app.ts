@@ -1,10 +1,10 @@
 import { winstonLogger } from '@thejuggernaut01/jobberapp-shared';
 import { Logger } from 'winston';
-import { config } from '@notifications/config';
+import { ENVIRONMENT } from '@notifications/config';
 import express, { Express } from 'express';
 import { start } from '@notifications/server';
 
-const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationApp', 'debug');
+const log: Logger = winstonLogger(`${ENVIRONMENT.ELASTIC_SEARCH.ELASTIC_SEARCH_URL}`, 'notificationApp', 'debug');
 
 function initialize(): void {
   const app: Express = express();

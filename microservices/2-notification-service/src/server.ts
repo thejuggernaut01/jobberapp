@@ -1,17 +1,29 @@
 import http from 'http';
 
 import { Logger } from 'winston';
-import { config } from '@notifications/config';
+import { ENVIRONMENT } from '@notifications/config';
 import { Application } from 'express';
 import { winstonLogger } from '@thejuggernaut01/jobberapp-shared';
 import 'express-async-errors';
 import { healthRoutes } from '@notifications/routes';
 import { checkConnection } from '@notifications/elasticsearch';
+import { Channel } from 'amqplib';
+
+import { createConnection } from './queues/connection';
+import { consumeAuthEmailMessages } from './queues/email.consumer';
 
 const SERVER_PORT = 4001;
-const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationService', 'debug');
+const log: Logger = winstonLogger(`${ENVIRONMENT.ELASTIC_SEARCH.ELASTIC_SEARCH_URL}`, 'notificationService', 'debug');
 
-const startQueues = async (): Promise<void> => {};
+const startQueues = async (): Promise<void> => {
+  const emailChannel: Channel = (await createConnection()) as Channel;
+  consumeAuthEmailMessages(emailChannel);
+
+  await emailChannel.assertExchange('jobberapp-email-notification', 'direct');
+  const message = JSON.stringify({ name: 'jobberapp', service: 'notification service' });
+
+  emailChannel.publish('jobberapp-email-notification', 'auth-email', Buffer.from(message));
+};
 
 const startElasticSearch = (): void => {
   checkConnection();

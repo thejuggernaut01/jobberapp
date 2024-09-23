@@ -1,16 +1,17 @@
 import { Client } from '@elastic/elasticsearch';
 import { ClusterHealthResponse } from '@elastic/elasticsearch/lib/api/typesWithBodyKey';
-import { config } from '@notifications/config';
+import { ENVIRONMENT } from '@notifications/config';
 import { winstonLogger } from '@thejuggernaut01/jobberapp-shared';
 import { Logger } from 'winston';
 
-const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationElasticSearchServer', 'debug');
+const log: Logger = winstonLogger(`${ENVIRONMENT.ELASTIC_SEARCH.ELASTIC_SEARCH_URL}`, 'notificationElasticSearchServer', 'debug');
 
 // connection to elastic search node
 const elasticSearchClient = new Client({
-  node: `${config.ELASTIC_SEARCH_URL}`
+  node: `${ENVIRONMENT.ELASTIC_SEARCH.ELASTIC_SEARCH_URL}`
 });
 
+// connection to check elastic search node health status
 export const checkConnection = async (): Promise<void> => {
   let isConnected = false;
 
