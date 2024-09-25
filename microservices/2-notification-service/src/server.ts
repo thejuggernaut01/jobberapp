@@ -10,19 +10,32 @@ import { checkConnection } from '@notifications/elasticsearch';
 import { Channel } from 'amqplib';
 
 import { createConnection } from './queues/connection';
-import { consumeAuthEmailMessages } from './queues/email.consumer';
+import { consumeAuthEmailMessages, consumeOrderEmailMessages } from './queues/email.consumer';
 
 const SERVER_PORT = 4001;
 const log: Logger = winstonLogger(`${ENVIRONMENT.ELASTIC_SEARCH.ELASTIC_SEARCH_URL}`, 'notificationService', 'debug');
 
 const startQueues = async (): Promise<void> => {
   const emailChannel: Channel = (await createConnection()) as Channel;
-  consumeAuthEmailMessages(emailChannel);
+  await consumeAuthEmailMessages(emailChannel);
+  await consumeOrderEmailMessages(emailChannel);
 
-  await emailChannel.assertExchange('jobberapp-email-notification', 'direct');
-  const message = JSON.stringify({ name: 'jobberapp', service: 'notification service' });
+  // const verificationLink = `${ENVIRONMENT.APP.CLIENT_URL}/confirm_email?v_token=12345gfkdsmwismowkow`;
+  // const authMessageDetails: IEmailMessageDetails = {
+  //   receiverEmail: `${ENVIRONMENT.EMAIL.SENDER_EMAIL}`,
+  //   verifyLink: verificationLink,
+  //   // make sure the template name correspond with the folder name
+  //   template: 'verifyEmail'
+  // };
 
-  emailChannel.publish('jobberapp-email-notification', 'auth-email', Buffer.from(message));
+  // await emailChannel.assertExchange('jobberapp-email-notification', 'direct');
+
+  // const authMessage = JSON.stringify(authMessageDetails);
+  // emailChannel.publish('jobberapp-email-notification', 'auth-email', Buffer.from(authMessage));
+
+  // await emailChannel.assertExchange('jobberapp-order-notification', 'direct');
+  // const orderMessage = JSON.stringify({ name: 'jobberapp', service: 'order notification service' });
+  // emailChannel.publish('jobberapp-order-notification', 'order-email', Buffer.from(orderMessage));
 };
 
 const startElasticSearch = (): void => {
