@@ -96,6 +96,27 @@ services:
       - elasticsearch
     networks:
       - elastic
+  notifications:
+    container_name: notification_container
+    build:
+      context: ../microservices/2-notification-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4001:4001
+    env_file: ../microservices/2-notification-service/.env
+    environment:
+      - ENABLE_APM=0
+      - NODE_ENV=development
+      - CLIENT_URL=http://localhost:3000
+      - RABBITMQ_ENDPOINT=amqp://jobberapp:jobberapppass@rabbitmq_container:5672
+      - SENDER_EMAIL=hailey.miller@ethereal.email
+      - SENDER_EMAIL_PASSWORD=TTRRFjUy3MGp6QwJFV
+      - ELASTIC_SEARCH_URL=http://elasticsearch_container:9200
+      - ELASTIC_APM_SERVER_URL=http://localhost:8200
+      - ELASTIC_APM_SECRET_TOKEN=
+    depends_on:
+      - elasticsearch
 
 networks:
   elastic:
