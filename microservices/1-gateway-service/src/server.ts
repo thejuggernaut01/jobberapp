@@ -8,9 +8,11 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { StatusCodes } from 'http-status-codes';
 import http from 'http';
+import { ENVIRONMENT } from '@gateway/config/environment';
+import { elasticSearch } from '@gateway/elasticsearch';
 
 const SERVER_PORT = 4000;
-const log: Logger = winstonLogger('http://localhost:9200', 'apiGatewayServer', 'debug');
+const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'apiGatewayServer', 'debug');
 
 export class GatewayServer {
   constructor(private app: Application) {}
@@ -32,9 +34,9 @@ export class GatewayServer {
     app.use(
       cookieSession({
         name: 'session',
-        keys: [],
+        keys: [`${ENVIRONMENT.SECRET_KEY_ONE}`, `${ENVIRONMENT.SECRET_KEY_TWO}`],
         maxAge: 24 * 7 * 36000000,
-        secure: false
+        secure: ENVIRONMENT.APP.ENV !== 'development'
         // sameSite: none
       })
     );
@@ -42,7 +44,7 @@ export class GatewayServer {
     app.use(helmet());
     app.use(
       cors({
-        origin: '',
+        origin: ENVIRONMENT.BASE_URL.CLIENT,
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
       })
@@ -57,7 +59,9 @@ export class GatewayServer {
 
   private routesMiddleware(app: Application): void {}
 
-  private startElasticSearch(): void {}
+  private startElasticSearch(): void {
+    elasticSearch.checkConnection();
+  }
 
   private errorHandler(app: Application): void {
     app.use('*', (req: Request, res: Response, next: NextFunction) => {
