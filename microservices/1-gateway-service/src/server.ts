@@ -10,6 +10,7 @@ import { StatusCodes } from 'http-status-codes';
 import http from 'http';
 import { ENVIRONMENT } from '@gateway/config/environment';
 import { elasticSearch } from '@gateway/elasticsearch';
+import { appRoutes } from '@gateway/routes';
 
 const SERVER_PORT = 4000;
 const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'apiGatewayServer', 'debug');
@@ -57,7 +58,9 @@ export class GatewayServer {
     app.use(urlencoded({ limit: '200mb', extended: true }));
   }
 
-  private routesMiddleware(app: Application): void {}
+  private routesMiddleware(app: Application): void {
+    appRoutes(app);
+  }
 
   private startElasticSearch(): void {
     elasticSearch.checkConnection();
