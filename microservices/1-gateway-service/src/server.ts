@@ -1,3 +1,5 @@
+import http from 'http';
+
 import { CustomError, IErrorResponse, winstonLogger } from '@thejuggernaut01/jobberapp-shared';
 import { Logger } from 'winston';
 import { Application, json, NextFunction, Request, Response, urlencoded } from 'express';
@@ -7,10 +9,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import { StatusCodes } from 'http-status-codes';
-import http from 'http';
 import { ENVIRONMENT } from '@gateway/config/environment';
 import { elasticSearch } from '@gateway/elasticsearch';
 import { appRoutes } from '@gateway/routes';
+
+import { axiosAuthInstance } from './services/api.service';
 
 const SERVER_PORT = 4000;
 const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'apiGatewayServer', 'debug');
@@ -50,6 +53,13 @@ export class GatewayServer {
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
       })
     );
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+      if (req.session?.jwt) {
+        axiosAuthInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
+      }
+
+      next();
+    });
   }
 
   private standardMiddleware(app: Application): void {
