@@ -23,12 +23,12 @@ export const verifyGatewayRequest = (
   if (!token) {
     throw new NotAuthorizedError(
       'Invalid request',
-      'verifyGatewayRequest() method: Request not coming from api gatewaye'
+      'verifyGatewayRequest() method: Request not coming from api gateway'
     );
   }
 
   try {
-    const payload: { id: string; iat: number } = JWT.verify(token, '') as {
+    const payload: { id: string; iat: number } = JWT.verify(token, 'addToken') as {
       id: string;
       iat: number;
     };
@@ -42,7 +42,8 @@ export const verifyGatewayRequest = (
   } catch (error) {
     throw new NotAuthorizedError(
       'Invalid request',
-      'verifyGatewayRequest() method: Request not coming from api gatewaye'
+      'verifyGatewayRequest() method: Request not coming from api gateway'
     );
   }
+  next()
 };
