@@ -25,7 +25,7 @@ export const createUser = async (data: IAuthDocument): Promise<IAuthDocument> =>
     'Buyer details sent to buyer service'
   );
 
-  const { password, ...userData } = result.dataValues as IAuthDocument;
+  const { password: _, ...userData } = result.dataValues as IAuthDocument;
   // const userData: IAuthDocument = omit(result.dataValues, ['password']) as IAuthDocument;
   return userData;
 };
@@ -38,7 +38,7 @@ export const getAuthUserById = async (authId: number): Promise<IAuthDocument> =>
     }
   })) as Model;
 
-  return user.dataValues;
+  return user?.dataValues;
 };
 
 export const getUserByUsernameOrEmail = async (username: string, email: string): Promise<IAuthDocument> => {
@@ -48,7 +48,7 @@ export const getUserByUsernameOrEmail = async (username: string, email: string):
     }
   })) as Model;
 
-  return user.dataValues;
+  return user?.dataValues;
 };
 
 export const getUserByUsername = async (username: string): Promise<IAuthDocument> => {
@@ -58,7 +58,7 @@ export const getUserByUsername = async (username: string): Promise<IAuthDocument
     }
   })) as Model;
 
-  return user.dataValues;
+  return user?.dataValues;
 };
 
 export const getUserByEmail = async (email: string): Promise<IAuthDocument> => {
@@ -68,7 +68,7 @@ export const getUserByEmail = async (email: string): Promise<IAuthDocument> => {
     }
   })) as Model;
 
-  return user.dataValues;
+  return user?.dataValues;
 };
 
 export const getAuthUserByVerificationToken = async (token: string): Promise<IAuthDocument> => {
@@ -79,7 +79,7 @@ export const getAuthUserByVerificationToken = async (token: string): Promise<IAu
     }
   })) as Model;
 
-  return user.dataValues;
+  return user?.dataValues;
 };
 
 export const getAuthUserByPasswordToken = async (token: string): Promise<IAuthDocument> => {
@@ -89,7 +89,7 @@ export const getAuthUserByPasswordToken = async (token: string): Promise<IAuthDo
     }
   })) as Model;
 
-  return user.dataValues;
+  return user?.dataValues;
 };
 
 export const updateVerifyEmailField = async (authId: number, emailVerified: number, emailVerificationToken: string): Promise<void> => {
