@@ -27,8 +27,8 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      - MYSQL_USER=jobber
-      - MYSQL_DATABASE=jobber_auth
+      - MYSQL_USER=jobberapp
+      - MYSQL_DATABASE=jobberapp_auth
       - MYSQL_ROOT_PASSWORD=api
       - MYSQL_PASSWORD=api
     ports:
@@ -41,9 +41,9 @@ services:
     image: postgres
     restart: always
     environment:
-      - POSTGRES_USER=jobber
+      - POSTGRES_USER=jobberapp
       - POSTGRES_PASSWORD=api
-      - POSTGRES_DB=jobber_reviews
+      - POSTGRES_DB=jobberapp_reviews
     ports:
       - 5432:5432
     volumes:

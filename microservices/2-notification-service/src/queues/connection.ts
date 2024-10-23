@@ -24,6 +24,7 @@ const createConnection = async (): Promise<Channel | undefined> => {
     return channel;
   } catch (error) {
     log.log('error', 'NotificationService error createConnection() method:', error);
+    return undefined;
   }
 };
 
