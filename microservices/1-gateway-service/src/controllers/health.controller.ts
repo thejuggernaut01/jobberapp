@@ -6,6 +6,6 @@ export class Health {
    * health
    */
   public health(_req: Request, res: Response): void {
-    res.status(StatusCodes.OK).send('API Gateway service is healthy and O.');
+    res.status(StatusCodes.OK).send('API Gateway service is healthy and OK.');
   }
 }
