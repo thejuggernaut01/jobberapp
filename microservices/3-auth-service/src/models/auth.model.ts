@@ -96,5 +96,7 @@ AuthModel.prototype.hashPassword = async (password: string): Promise<string> => 
 };
 
 // force: true, always deletes the table when there is a server restart
-AuthModel.sync({});
+if (process.env.NODE_ENV !== 'test') {
+  AuthModel.sync({});
+}
 export { AuthModel };

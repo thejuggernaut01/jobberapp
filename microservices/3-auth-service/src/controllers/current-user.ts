@@ -25,7 +25,7 @@ export async function resendEmail(req: Request, res: Response) {
   const checkIfUserExist: IAuthDocument = await getUserByEmail(lowerCase(email));
 
   if (!checkIfUserExist) {
-    throw new BadRequestError('Email is verified', 'CurrentUser resentEmail() method error');
+    throw new BadRequestError('Email is invalid', 'CurrentUser resentEmail() method error');
   }
 
   const randomBytes: Buffer = await Promise.resolve(crypto.randomBytes(20));
@@ -51,5 +51,5 @@ export async function resendEmail(req: Request, res: Response) {
 
   const updatedUser = await getAuthUserById(parseInt(userId));
 
-  res.status(StatusCodes.OK).json({ message: 'User created successfully', user: updatedUser });
+  res.status(StatusCodes.OK).json({ message: 'Email verification sent', user: updatedUser });
 }
