@@ -1,6 +1,6 @@
 # docker compose up -d redis mongodb mysql postgres rabbitmq elasticsearch kibana
 
-version: "3.9"
+version: '3.9'
 services:
   redis:
     container_name: redis_container
@@ -45,7 +45,7 @@ services:
       - POSTGRES_PASSWORD=api
       - POSTGRES_DB=jobberapp_reviews
     ports:
-      - 5432:5432
+      - 5433:5432
     volumes:
       - ./docker-volumes/postgres:/var/lib/postgres
 
@@ -67,13 +67,13 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
     restart: always
     environment:
-      ES_JAVA_OPTS: -Xmx1g -Xms1g
-      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: '-Xmx512m -Xms1g'
+      bootstrap.memory_lock: 'true'
       discovery.type: single-node
-      xpack.security.enabled: "false"
-      xpack.security.authc.api_key.enabled: "true"
-      xpack.monitoring.collection.enabled: "true"
-      xpack.security.enrollment.enabled: "true"
+      xpack.security.enabled: 'false'
+      xpack.security.authc.api_key.enabled: 'true'
+      xpack.monitoring.collection.enabled: 'true'
+      xpack.security.enrollment.enabled: 'true'
     ports:
       # ElasticSearch uses 9200 for REST and 9300 for inter-node communication in a cluster
       - 9200:9200
@@ -87,7 +87,7 @@ services:
     image: docker.elastic.co/kibana/kibana:8.15.1
     restart: always
     environment:
-      ELASTICSEARCH_HOST: "http://elasticsearch_container:9200"
+      ELASTICSEARCH_HOST: 'http://elasticsearch_container:9200'
     ports:
       - 5601:5601
     volumes:
@@ -99,12 +99,12 @@ services:
   gateway:
     container_name: gateway_container
     build:
-      context: ../microservices/1-gateway-service
+      context: ./microservices/1-gateway-service
       dockerfile: Dockerfile.dev
     restart: always
     ports:
       - 4000:4000
-    env_file: ../microservices/1-gateway-service/.env
+    env_file: ./microservices/1-gateway-service/.env
     environment:
       - ENABLE_APM=0
       - GATEWAY_JWT_TOKEN=202f1c6d79b74a307ab01a71f327b1dd
@@ -113,7 +113,7 @@ services:
       - SECRET_KEY_ONE=ebc707a799280e1ac83e7f6c1390f973
       - SECRET_KEY_TWO=22bae7e79542f24be647e66340dfaf27
       - CLIENT_URL=http://localhost:3000
-      - AUTH_BASE_URL=http://localhost:4002
+      - AUTH_BASE_URL=http://auth_container:4002
       - USERS_BASE_URL=http://localhost:4003
       - GIG_BASE_URL=http://localhost:4004
       - MESSAGE_BASE_URL=http://localhost:4005
@@ -128,12 +128,12 @@ services:
   notifications:
     container_name: notification_container
     build:
-      context: ../microservices/2-notification-service
+      context: ./microservices/2-notification-service
       dockerfile: Dockerfile.dev
     restart: always
     ports:
       - 4001:4001
-    env_file: ../microservices/2-notification-service/.env
+    env_file: ./microservices/2-notification-service/.env
     environment:
       - ENABLE_APM=0
       - NODE_ENV=development
@@ -146,7 +146,34 @@ services:
       - ELASTIC_APM_SECRET_TOKEN=
     depends_on:
       - elasticsearch
+  auth:
+    container_name: auth_container
+    build:
+      context: ./microservices/3-auth-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4002:4002
+    env_file: ./microservices/3-auth-service/.env
+    environment:
+      - ENABLE_APM=0
+      - GATEWAY_JWT_TOKEN=202f1c6d79b74a307ab01a71f327b1dd
+      - JWT_TOKEN=203f88a26466a53179bbbb897fc6a434
+      - NODE_ENV=development
+      - API_GATEWAY_URL=http://gateway_container:4000
+      - CLIENT_URL=http://localhost:3000
+      - RABBITMQ_ENDPOINT=amqp://jobberapp:jobberapppass@localhost:5672
+      - MYSQL_DB=mysql://jobberapp:api@localhost:3307/jobberapp_auth
+      - CLOUD_NAME=bookbuddy
+      - CLOUD_API_KEY=846587416443782
+      - CLOUD_API_SECRET=JU-vr5WCi11i7ec_NrQdzqnMtzA
+      - ELASTIC_SEARCH_URL=http://elasticsearch_container:9200
+      - ELASTIC_APM_SERVER_URL=http://localhost:8200
+      - ELASTIC_APM_SECRET_TOKEN=
 
+    depends_on:
+      - elasticsearch
+      - mysql
 
 networks:
   elastic:
