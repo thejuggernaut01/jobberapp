@@ -24,7 +24,7 @@ services:
   mysql:
     container_name: mysql_container
     image: mysql
-    command: --default-authentication-plugin=mysql_native_password
+    # command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       - MYSQL_USER=jobberapp
@@ -35,7 +35,6 @@ services:
       - 3307:3306
     volumes:
       - ./docker-volumes/mysql:/var/lib/mysql
-
   postgres:
     container_name: postgres_container
     image: postgres
@@ -62,20 +61,48 @@ services:
       # Management port - to access the dashboard
       - 15672:15672
 
+  # elasticsearch:
+  #   container_name: elasticsearch_container
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
+  #   restart: always
+  #   environment:
+  #     ES_JAVA_OPTS: -Xms512m -Xmx512m
+  #     bootstrap.memory_lock: 'true'
+  #     discovery.type: single-node
+  #     xpack.security.enabled: 'false'
+  #     xpack.security.authc.api_key.enabled: 'true'
+  #     xpack.monitoring.collection.enabled: 'true'
+  #     xpack.security.enrollment.enabled: 'true'
+  #   ports:
+  #     # ElasticSearch uses 9200 for REST and 9300 for inter-node communication in a cluster
+  #     - 9200:9200
+  #   volumes:
+  #     - ./docker-volumes/elasticsearch-data:/usr/share/elasticsearch/data
+  #   networks:
+  #     - elastic
+
   elasticsearch:
     container_name: elasticsearch_container
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
     restart: always
     environment:
-      ES_JAVA_OPTS: '-Xmx512m -Xms1g'
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
       bootstrap.memory_lock: 'true'
       discovery.type: single-node
       xpack.security.enabled: 'false'
       xpack.security.authc.api_key.enabled: 'true'
       xpack.monitoring.collection.enabled: 'true'
       xpack.security.enrollment.enabled: 'true'
+      # Add this for permissions handling
+      TAKE_FILE_OWNERSHIP: '1'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
     ports:
-      # ElasticSearch uses 9200 for REST and 9300 for inter-node communication in a cluster
       - 9200:9200
     volumes:
       - ./docker-volumes/elasticsearch-data:/usr/share/elasticsearch/data
