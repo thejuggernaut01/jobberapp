@@ -1,18 +1,19 @@
 import { Client } from '@elastic/elasticsearch';
 import { ClusterHealthResponse } from '@elastic/elasticsearch/lib/api/typesWithBodyKey';
 import { ENVIRONMENT } from '@auth/config/environment';
-import { winstonLogger } from '@thejuggernaut01/jobberapp-shared';
+import { ISellerGig, winstonLogger } from '@thejuggernaut01/jobberapp-shared';
 import { Logger } from 'winston';
+import { GetResponse } from '@elastic/elasticsearch/lib/api/types';
 
 const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'authElasticSearchServer', 'debug');
 
 // connection to elastic search node
-export const elasticSearchClient = new Client({
+const elasticSearchClient = new Client({
   node: `${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`
 });
 
 // connection to check elastic search node health status
-export const checkConnection = async (): Promise<void> => {
+const checkConnection = async (): Promise<void> => {
   let isConnected = false;
 
   while (!isConnected) {
@@ -28,3 +29,41 @@ export const checkConnection = async (): Promise<void> => {
     }
   }
 };
+
+const checkIfIndexExist = async (indexName: string): Promise<boolean> => {
+  const result: boolean = await elasticSearchClient.indices.exists({ index: indexName });
+  return result;
+};
+
+const createIndex = async (indexName: string): Promise<void> => {
+  try {
+    const result: boolean = await checkIfIndexExist(indexName);
+
+    if (result) {
+      log.info(`Index "${indexName}" already exists`);
+    } else {
+      await elasticSearchClient.indices.create({ index: indexName });
+      await elasticSearchClient.indices.refresh({ index: indexName });
+      log.info(`Index "${indexName}" has been created successfully`);
+    }
+  } catch (error) {
+    log.error(`An error occured while creating the index ${indexName}`);
+    log.log('Error', 'AuthService elasticsearch createIndex() method error:', error);
+  }
+};
+
+const getDocumentById = async (index: string, gigId: string): Promise<ISellerGig> => {
+  try {
+    const result: GetResponse = await elasticSearchClient.get({
+      index,
+      id: gigId
+    });
+
+    return result._source as ISellerGig;
+  } catch (error) {
+    log.log('Error', 'AuthService elasticsearch getDocumentById() method error:', error);
+    return {} as ISellerGig;
+  }
+};
+
+export { elasticSearchClient, checkConnection, checkIfIndexExist, createIndex, getDocumentById };

@@ -1,3 +1,5 @@
+import http from 'http';
+
 import { CustomError, IAuthPayload, IErrorResponse, winstonLogger } from '@thejuggernaut01/jobberapp-shared';
 import { Logger } from 'winston';
 import { ENVIRONMENT } from '@auth/config/environment';
@@ -7,10 +9,10 @@ import helmet from 'helmet';
 import cors from 'cors';
 import { verify } from 'jsonwebtoken';
 import compression from 'compression';
-import { checkConnection } from '@auth/elasticsearch';
-import http from 'http';
+import { checkConnection, createIndex } from '@auth/elasticsearch';
 import { appRoutes } from '@auth/routes';
 import { Channel } from 'amqplib';
+
 import { createConnection } from './queues/connection';
 
 const SERVER_PORT = 4001;
@@ -56,6 +58,7 @@ const startQueues = async (): Promise<void> => {
 
 const startElasticSearch = (): void => {
   checkConnection();
+  createIndex('gigs');
 };
 
 const authErrorMiddleware = (app: Application): void => {

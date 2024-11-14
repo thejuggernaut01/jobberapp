@@ -41,3 +41,5 @@ export const ENVIRONMENT: IENVIRONMENT = {
     CLOUD_API_SECRET: process.env.CLOUD_API_SECRET || ''
   }
 };
+
+console.log(ENVIRONMENT);
