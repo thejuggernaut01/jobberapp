@@ -14,7 +14,7 @@ const closeConnection = (channel: Channel, connection: Connection): void => {
 
 const createConnection = async (): Promise<Channel | undefined> => {
   try {
-    const connection: Connection = await client.connect(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`);
+    const connection: Connection = await client.connect(`${ENVIRONMENT.BASE_URL.RABBITMQ_ENDPOINT}`);
     const channel: Channel = await connection.createChannel();
 
     log.info('Auth server connected to queue successfully...');

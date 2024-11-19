@@ -50,10 +50,6 @@ const AuthModel: ModelDefined<IAuthDocument, AuthUserCreationAttributes> & AuthM
       allowNull: false,
       defaultValue: 0
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      defaultValue: Date.now()
-    },
     passwordResetToken: {
       type: DataTypes.STRING,
       allowNull: true
@@ -61,7 +57,7 @@ const AuthModel: ModelDefined<IAuthDocument, AuthUserCreationAttributes> & AuthM
     passwordResetExpires: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: new Date()
+      defaultValue: () => new Date()
     }
   },
   {
@@ -78,7 +74,8 @@ const AuthModel: ModelDefined<IAuthDocument, AuthUserCreationAttributes> & AuthM
         unique: true,
         fields: ['emailVerificationToken']
       }
-    ]
+    ],
+    timestamps: true
   }
 ) as ModelDefined<IAuthDocument, AuthUserCreationAttributes> & AuthModelInstanceMethods;
 

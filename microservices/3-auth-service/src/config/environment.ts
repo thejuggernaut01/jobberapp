@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 interface IENVIRONMENT {
   APP: {
     ENV: string;
@@ -41,5 +44,3 @@ export const ENVIRONMENT: IENVIRONMENT = {
     CLOUD_API_SECRET: process.env.CLOUD_API_SECRET || ''
   }
 };
-
-console.log(ENVIRONMENT);

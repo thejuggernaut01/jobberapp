@@ -32,7 +32,7 @@ const securityMiddleware = (app: Application): void => {
     })
   );
 
-  app.use((req: Request, _res: Response) => {
+  app.use((req: Request) => {
     if (req.headers.authorization) {
       const token = req.headers.authorization.split(' ')[1];
       const payload: IAuthPayload = verify(token, ENVIRONMENT.TOKEN.JWT) as IAuthPayload;
