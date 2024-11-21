@@ -44,7 +44,7 @@ const updateBuyerPurchasedGigsProp = async (buyerId: string, purchasedGigs: stri
             purchasedGigs: purchasedGigs
           }
         }
-  );
+  ).exec();
 };
 
 export { getBuyerByEmail, getBuyerByUsername, getRandomBuyers, createBuyer, updateBuyerIsSellerProp, updateBuyerPurchasedGigsProp };
