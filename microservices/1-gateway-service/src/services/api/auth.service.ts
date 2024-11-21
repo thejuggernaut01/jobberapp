@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { ENVIRONMENT } from '@gateway/config/environment';
 import { IAuth } from '@thejuggernaut01/jobberapp-shared';
 
-import { AxiosService } from './axios';
+import { AxiosService } from '../axios';
 
 // each service will have it's own axios instance
 // we need to add jwt token coming from the cookie session
