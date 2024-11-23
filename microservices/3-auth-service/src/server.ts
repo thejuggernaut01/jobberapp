@@ -15,7 +15,7 @@ import { Channel } from 'amqplib';
 
 import { createConnection } from './queues/connection';
 
-const SERVER_PORT = 4001;
+const SERVER_PORT = 4002;
 const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'authDatabaseServer', 'debug');
 
 export let authChannel: Channel;
