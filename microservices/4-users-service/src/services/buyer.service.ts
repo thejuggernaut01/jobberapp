@@ -11,7 +11,7 @@ const getBuyerByUsername = async (username: string): Promise<IBuyerDocument> => 
   return buyer;
 };
 
-const getRandomBuyers = async (count: 0): Promise<IBuyerDocument[]> => {
+const getRandomBuyers = async (count: number): Promise<IBuyerDocument[]> => {
   // $sample operator is used to return random items from the collections
   const buyer: IBuyerDocument[] | null = (await BuyerModel.aggregate([{ $sample: { size: count } }]).exec()) as IBuyerDocument[];
 
