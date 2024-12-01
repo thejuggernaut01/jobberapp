@@ -9,7 +9,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import { verify } from 'jsonwebtoken';
 import compression from 'compression';
-import { checkConnection } from '@gig/elasticsearch';
+import { checkConnection, createIndex } from '@gig/elasticsearch';
 import { appRoutes } from '@gig/routes';
 
 const SERVER_PORT = 4004;
@@ -51,6 +51,7 @@ const startQueues = async (): Promise<void> => {};
 
 const startElasticSearch = (): void => {
   checkConnection();
+  createIndex('gigs');
 };
 
 const gigErrorMiddleware = (app: Application): void => {
