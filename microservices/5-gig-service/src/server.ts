@@ -11,9 +11,12 @@ import { verify } from 'jsonwebtoken';
 import compression from 'compression';
 import { checkConnection, createIndex } from '@gig/elasticsearch';
 import { appRoutes } from '@gig/routes';
+import { createConnection } from '@gig/queues/connection';
+import { Channel } from 'amqplib';
 
 const SERVER_PORT = 4004;
 const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'gigDatabaseServer', 'debug');
+let gigChannel: Channel;
 
 const securityMiddleware = (app: Application): void => {
   app.set('trust proxy', 1);
@@ -47,7 +50,9 @@ const routesMiddleware = (app: Application): void => {
   appRoutes(app);
 };
 
-const startQueues = async (): Promise<void> => {};
+const startQueues = async (): Promise<void> => {
+  gigChannel = (await createConnection()) as Channel;
+};
 
 const startElasticSearch = (): void => {
   checkConnection();
@@ -78,7 +83,7 @@ const startServer = (app: Application): void => {
   }
 };
 
-export const start = (app: Application): void => {
+const start = (app: Application): void => {
   securityMiddleware(app);
   standardMiddleware(app);
   routesMiddleware(app);
@@ -87,3 +92,5 @@ export const start = (app: Application): void => {
   gigErrorMiddleware(app);
   startServer(app);
 };
+
+export { start, gigChannel };
