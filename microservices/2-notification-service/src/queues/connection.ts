@@ -14,7 +14,7 @@ const closeConnection = (channel: Channel, connection: Connection): void => {
 
 const createConnection = async (): Promise<Channel | undefined> => {
   try {
-    const connection: Connection = await client.connect(`${ENVIRONMENT.ELASTIC_SEARCH.ELASTIC_SEARCH_URL}`);
+    const connection: Connection = await client.connect(`${ENVIRONMENT.RABBITMQ.RABBITMQ_ENDPOINT}`);
     const channel: Channel = await connection.createChannel();
 
     log.info('Notification server connected to queue successfully...');
