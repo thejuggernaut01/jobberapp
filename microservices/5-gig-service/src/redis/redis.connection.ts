@@ -4,6 +4,7 @@ import { createClient } from 'redis';
 import { Logger } from 'winston';
 
 const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'gigRedisConnection', 'debug');
+
 type RedisClient = ReturnType<typeof createClient>;
 const client: RedisClient = createClient({
   url: ENVIRONMENT.DB.REDIS_HOST
