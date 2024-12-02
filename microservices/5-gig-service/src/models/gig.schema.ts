@@ -45,5 +45,5 @@ gigSchema.virtual('id').get(function () {
   return this._id;
 });
 
-const gigModel: Model<ISellerGig> = model<ISellerGig>('Gig', gigSchema, 'Gig');
-export { gigModel };
+const GigModel: Model<ISellerGig> = model<ISellerGig>('Gig', gigSchema, 'Gig');
+export { GigModel };

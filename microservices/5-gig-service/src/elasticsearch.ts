@@ -60,12 +60,12 @@ const getDocumentCount = async (index: string): Promise<number> => {
   }
 };
 
-const getIndexedGig = async (index: string, itemId: string): Promise<ISellerGig> => {
+const getIndexedData = async (index: string, itemId: string): Promise<ISellerGig> => {
   try {
     const result: GetResponse = await elasticSearchClient.get({ index, id: itemId });
     return result._source as ISellerGig;
   } catch (error) {
-    log.log('error', 'GigService elasticsearch getIndexedGig() method error:', error);
+    log.log('error', 'GigService elasticsearch getIndexedData() method error:', error);
     return {} as ISellerGig;
   }
 };
@@ -98,7 +98,7 @@ export {
   checkConnection,
   createIndex,
   elasticSearchClient,
-  getIndexedGig,
+  getIndexedData,
   addDataToIndex,
   updateIndexedData,
   deleteIndexedData,
