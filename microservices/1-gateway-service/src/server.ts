@@ -19,6 +19,7 @@ import { axiosGigInstance } from '@gateway/services/api/gig.service';
 import { Server } from 'socket.io';
 import { createClient } from 'redis';
 import { createAdapter } from '@socket.io/redis-adapter';
+import { SocketIOAppHandler } from '@gateway/sockets/socket';
 
 const SERVER_PORT = 4000;
 const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'apiGatewayServer', 'debug');
@@ -146,5 +147,8 @@ export class GatewayServer {
     }
   }
 
-  private socketIOConnections(io: Server): void {}
+  private socketIOConnections(io: Server): void {
+    const socketIOApp = new SocketIOAppHandler(io);
+    socketIOApp.listen();
+  }
 }

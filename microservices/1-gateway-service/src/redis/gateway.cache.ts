@@ -1,13 +1,13 @@
 import { ENVIRONMENT } from '@gateway/config/environment';
 import { winstonLogger } from '@thejuggernaut01/jobberapp-shared';
-import { createClient } from 'redis';
 import { Logger } from 'winston';
+import { createClient } from 'redis';
 
 type RedisClient = ReturnType<typeof createClient>;
 
-const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'gigRedisConnection', 'debug');
+const log: Logger = winstonLogger(`${ENVIRONMENT.BASE_URL.ELASTIC_SEARCH}`, 'gatewayCache', 'debug');
 
-export class gatewayCache {
+export class GatewayCache {
   client: RedisClient;
   constructor() {
     this.client = createClient({ url: ENVIRONMENT.BASE_URL.REDIS_HOST });
