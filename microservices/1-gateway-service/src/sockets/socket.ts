@@ -55,11 +55,11 @@ export class SocketIOAppHandler {
     });
 
     chatSocketClient.on('connect', () => {
-      log.info('GatewayService ChatService socket connected');
+      log.info('ChatService socket connected');
     });
 
     chatSocketClient.on('disconnect', (reason: SocketClient.DisconnectReason) => {
-      log.info('GatewayService ChatService socket error reason', reason);
+      log.info('ChatService socket error reason', reason);
       chatSocketClient.connect();
     });
 
